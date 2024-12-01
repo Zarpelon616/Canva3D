@@ -1,0 +1,144 @@
+    <!DOCTYPE html>
+    <html lang="pt-BR">
+    <head>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+        <meta charset="UTF-8"><!--Define o conjunto de caracteres UTF-8-->
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Sistema Canvas</title>
+        <link rel="stylesheet" href="style.css"><!--Estilos personalizados-->
+        <link rel="icon" href="img/icon-computacao-grafica.jpg" type="image/x-icon"><!--Define o ícone da página-->
+        <style>
+            /* Estilos para o contêiner dos botões */
+            .button-container {
+                display: flex; /* Usar flexbox para alinhar os botões */
+                gap: 10px; /* Espaçamento entre os botões */
+            }
+        </style>
+    </head>
+    <body>
+        
+        <!-- Container principal -->
+        <div id="container">
+            <div class="add-box">
+            <button id="show-table-button">TABELA DE OBJETOS</button> <!-- Botão para exibir a tabela de objetos -->
+            
+
+                <!-- Tabela com objetos adicionados -->
+                <div id="table-container" style="display: none;">
+                    <table id="object-table">
+                        <thead>
+                            <tr>
+                                <th>Nome</th>
+                                <th>Tipo</th>
+                                <th>Coordenadas</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Linhas da tabela serão geradas dinamicamente -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Canvas centralizado para exibir os objetos -->
+            <div id="viewport-container">
+                <canvas id="viewport"></canvas>
+            </div>
+
+            <!-- Botões de controle à direita -->
+            <div id="controls-container">
+                <div class="controls-box">
+                    <button id="show-all-buttons">CONTROLES</button> <!-- Botão para exibir todos os botões -->
+                </div>
+                <div id="controls">
+                    <!-- Div para todos os botões, inicialmente oculta -->
+                    <div id="all-controls" style="display: none;" class="add-box">
+                        <!--Botões de adicionar -->
+                        <button id="add-point">Adicionar Ponto</button>
+                        <button id="add-line">Adicionar Reta</button>
+                        <button id="add-polyline">Adicionar Polilinha</button>
+                        <button id="add-polygon">Adicionar Polígono</button>
+                        
+                        <!--Botões de transformação-->
+                        <button id="move-object">Mover Objeto</button>
+                        <button id="translate-object">Transladar</button>
+                        <button id="rotate-object">Rotacionar</button>
+                        <button id="scale-object">Escalonar</button>
+
+                        <!-- Botões de remoção -->
+                        <button id="remove-all">Remover Todos os Objetos</button>
+
+                    </div>     
+                </div>
+            </div>
+            
+            <!-- Modal para rotação -->
+            <div id="rotate-modal" style="display:none;">
+                <div id="rotate-modal-content">
+                    <h3>Rotação do Objeto</h3>
+
+                    <label for="rotation-angle">Ângulo de rotação (em graus):</label>
+                    <input type="number" id="rotation-angle" placeholder="Digite o ângulo">
+
+                    <label for="rotation-axis">Eixo de rotação:</label>
+                    <select id="rotation-axis">
+                        <option value="x">X</option>
+                        <option value="y">Y</option>
+                        <option value="z">Z</option>
+                    </select>
+
+                    <label for="rotation-point">Rotacionar em relação a:</label>
+                    <select id="rotation-point">
+                        <option value="center">Centro do objeto</option>
+                        <option value="origin">Origem</option>
+                        <option value="custom">Ponto específico</option>
+                    </select>
+
+                    <div id="custom-point-input" style="display:none;">
+                        <label for="custom-point-x">Coordenada X do ponto específico:</label>
+                        <input type="number" id="custom-point-x" placeholder="Digite a coordenada X">
+
+                        <label for="custom-point-y">Coordenada Y do ponto específico:</label>
+                        <input type="number" id="custom-point-y" placeholder="Digite a coordenada Y">
+
+                        <label for="custom-point-z">Coordenada Z do ponto específico:</label>
+                        <input type="number" id="custom-point-z" placeholder="Digite a coordenada Z">
+                    </div>
+
+                    <div class="modal-actions">
+                        <button id="apply-rotation">Aplicar rotação</button>
+                        <button id="close-modal">Fechar</button>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- Modal para escalonamento -->
+            <div id="scale-modal" style="display:none;">
+                <div id="scale-modal-content">
+                    <label for="scale-x">Escala no eixo X:</label>
+                    <input type="number" id="scale-x" placeholder="Digite o valor para X" step="0.1">
+            
+                    <label for="scale-y">Escala no eixo Y:</label>
+                    <input type="number" id="scale-y" placeholder="Digite o valor para Y" step="0.1">
+            
+                    <label for="scale-z">Escala no eixo Z:</label>
+                    <input type="number" id="scale-z" placeholder="Digite o valor para Z" step="0.1">
+            
+                    <label for="scale-point">Escalonar em relação a:</label>
+                    <select id="scale-point">
+                        <option value="origin">Origem</option>
+                        <option value="center">Centro do objeto</option>
+                    </select>
+            
+                    <button id="apply-scale">Aplicar escalonamento</button>
+                    <button id="close-scale-modal">Fechar</button>
+                </div>
+            </div>
+
+
+        <!-- Scripts -->
+        <script src="script.js"></script>
+    </body>
+    </html>

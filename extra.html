@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <meta charset="UTF-8"><!--Define o conjunto de caracteres UTF-8-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema Canvas</title>
+    <link rel="stylesheet" href="style.css"><!--Estilos personalizados-->
+    <link rel="icon" href="img/icon-computacao-grafica.jpg" type="image/x-icon"><!--Define o ícone da página-->
+    <style>
+        /* Estilos para o contêiner dos botões */
+        .button-container {
+            display: flex; /* Usar flexbox para alinhar os botões */
+            gap: 10px; /* Espaçamento entre os botões */
+        }
+    </style>
+</head>
+<body>
+    
+    <!-- Container principal -->
+    <div id="container">
+        <div class="add-box">
+        <button id="show-table-button">TABELA DE OBJETOS</button> <!-- Botão para exibir a tabela de objetos -->
+        
+
+            <!-- Tabela com objetos adicionados -->
+            <div id="table-container" style="display: none;">
+                <table id="object-table">
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Tipo</th>
+                            <th>Coordenadas</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Linhas da tabela serão geradas dinamicamente -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Canvas centralizado para exibir os objetos -->
+        <div id="viewport-container">
+            <canvas id="viewport"></canvas>
+        </div>
+
+        <!-- Botões de controle à direita -->
+        <div id="controls-container">
+            <div class="controls-box">
+                <button id="show-all-buttons">CONTROLES</button> <!-- Botão para exibir todos os botões -->
+            </div>
+            <div id="controls">
+                <!-- Div para todos os botões, inicialmente oculta -->
+                <div id="all-controls" style="display: none;" class="add-box">
+                    <!--Botões de adicionar -->
+                    <button id="add-point">Ponto</button>
+
+                </div>     
+            </div>
+        </div>
+
+
+
+    <!-- Scripts -->
+    <script src="base_extra.js"></script>
+
+
+</body>
+</html>
