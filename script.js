@@ -766,6 +766,9 @@ function scaleObject() {
 
     // Atualizar o viewport após a transformação
     updateViewport();
+
+    //Atualiza a tabela com as novas coordenadas
+    updateTable(selectedObject.name, selectedObject);
 }
 
 // Adicionar evento para escalonamento
@@ -822,25 +825,27 @@ function removeAllObjects() {
 
 function updateTable(name, object) {
     const tableBody = document.querySelector('#object-table tbody');
-    const rows = tableBody.querySelectorAll('tr');
-    let row = null;
-    
 
-    // Verificar se já existe uma linha com o nome do objeto
-     rows.forEach(r => {
-        if (r.getAttribute('data-name') === name) {
-            row = r;
-        }
-    });
+    // Atualiza a matriz mundial para refletir a posição do objeto
+    object.updateMatrixWorld(true);
 
-    // Caso o objeto não exista, cria uma nova linha
-    if (!row) {
+    // Localiza uma linha existente com o mesmo nome
+    const existingRow = Array.from(tableBody.querySelectorAll('tr')).find(row => row.getAttribute('data-name') === name);
+
+    let row;
+    if (!existingRow) {
+        // Caso o objeto não exista, cria uma nova linha
         row = document.createElement('tr');
-        row.setAttribute('data-name', name);  //Atribui o nome ao atributo 'data-name', Atribui o nome como atributo de dados para identificar a linha
+        row.setAttribute('data-name', name); // Atribui o nome como atributo de dados para identificar a linha
+        tableBody.appendChild(row);
+    } else {
+        // Caso já exista, reutiliza a linha existente
+        row = existingRow;
+    }
 
-        // Determinar tipo de objeto e coordenadas
-        let objectType;
-        let coordinates;
+    // Determinar tipo de objeto e coordenadas
+    let objectType;
+    let coordinates;
 
     if (object.isMesh && object.geometry.type === "SphereGeometry") {
         // Caso seja um ponto (esfera)
@@ -848,16 +853,15 @@ function updateTable(name, object) {
         coordinates = `(${object.position.x.toFixed(2)}, ${object.position.y.toFixed(2)}, ${object.position.z.toFixed(2)})`;
     } else if (object.isLine && object.geometry.type === "BufferGeometry") {
         // Caso seja uma linha ou polilinha
-        if (object.geometry.attributes.position.array.length === 6) {
+        const positions = object.geometry.attributes.position.array;
+        if (positions.length === 6) {
             // Linha com 2 pontos
             objectType = "Reta";
-            const positions = object.geometry.attributes.position.array;
             coordinates = `Início: (${positions[0].toFixed(2)}, ${positions[1].toFixed(2)}, ${positions[2].toFixed(2)})<br>
                            Fim: (${positions[3].toFixed(2)}, ${positions[4].toFixed(2)}, ${positions[5].toFixed(2)})`;
-        } else if (object.geometry.attributes.position.array.length > 6) {
+        } else if (positions.length > 6) {
             // Polilinha (vários pontos)
             objectType = "Polilinha";
-            const positions = object.geometry.attributes.position.array;
             const points = [];
             for (let i = 0; i < positions.length; i += 3) {
                 points.push(`(${positions[i].toFixed(2)}, ${positions[i + 1].toFixed(2)}, ${positions[i + 2].toFixed(2)})`);
@@ -875,49 +879,15 @@ function updateTable(name, object) {
         coordinates = "Não aplicável";
     }
 
-    // Criar linha na tabela com as informações
+    // Atualiza o conteúdo da linha
     row.innerHTML = `
         <td>${name}</td>
         <td>${objectType}</td>
         <td>${coordinates}</td>
         <td><button class="remove-btn" onclick="removeObjectFromTable('${name}')">Remover</button></td>
     `;
-    tableBody.appendChild(row);
-    } else {
-        // Caso o objeto já exista na tabela, apenas atualiza as coordenadas
-        let coordinates;
-
-        if (object.isMesh && object.geometry.type === "SphereGeometry") {
-            // Caso seja um ponto (esfera)
-            coordinates = `(${object.position.x.toFixed(2)}, ${object.position.y.toFixed(2)}, ${object.position.z.toFixed(2)})`;
-        } else if (object.isLine && object.geometry.type === "BufferGeometry") {
-            // Caso seja uma linha ou polilinha
-            const positions = object.geometry.attributes.position.array;
-            if (positions.length === 6) {
-                // Linha com 2 pontos
-                coordinates = `Início: (${positions[0].toFixed(2)}, ${positions[1].toFixed(2)}, ${positions[2].toFixed(2)})<br>
-                               Fim: (${positions[3].toFixed(2)}, ${positions[4].toFixed(2)}, ${positions[5].toFixed(2)})`;
-            } else if (positions.length > 6) {
-                // Polilinha (vários pontos)
-                const points = [];
-                for (let i = 0; i < positions.length; i += 3) {
-                    points.push(`(${positions[i].toFixed(2)}, ${positions[i + 1].toFixed(2)}, ${positions[i + 2].toFixed(2)})`);
-                }
-                coordinates = points.join("<br>");
-            }
-        } else if (object.isMesh && object.geometry.type === "Geometry" && object.geometry instanceof THREE.ShapeGeometry) {
-            // Caso seja um polígono (forma fechada)
-            const points = object.geometry.vertices.map(v => `(${v.x.toFixed(2)}, ${v.y.toFixed(2)}, ${v.z.toFixed(2)})`);
-            coordinates = points.join("<br>");
-        } else {
-            // Caso seja outro tipo de objeto
-            coordinates = "Não aplicável";
-        }
-
-        // Atualiza as coordenadas na tabela
-        row.cells[2].innerHTML = coordinates;
-    }
 }
+
 
 // Função para remover o objeto da tabela
 function removeObjectFromTable(name) {
